@@ -1,9 +1,8 @@
+import pygame as pg
+from pygame.math import Vector2 as V2
 from random import randint
 from collections import deque
 import random
-import pygame as pg
-from pygame.math import Vector2 as V2
-
 
 pg.init()
 
@@ -84,43 +83,34 @@ def bfs(start, target, obstacles):
     return []
 
 
-def move_along_body(snake, head, direction):
+def find_longest_path_to_tail(snake, head):
+    tail = snake[-1]
+
+    # Intentar encontrar un camino hacia la cola utilizando BFS
+    path_to_tail = bfs(head, tail, snake[1:])
+
+    if path_to_tail:
+        # Si se encontró un camino hacia la cola, seguirlo
+        next_move = path_to_tail[0] - head
+        return next_move
+
+    # Si no se encontró un camino hacia la cola, evitar colisiones con obstáculos
     possible_moves = [
-        head + V2(1, 0),
-        head + V2(-1, 0),
-        head + V2(0, 1),
-        head + V2(0, -1),
+        V2(1, 0),
+        V2(-1, 0),
+        V2(0, 1),
+        V2(0, -1),
     ]
 
     valid_moves = [
-        move for move in possible_moves if not is_obstacle(move, snake)]
-
-    if not valid_moves:
-        # Si no hay movimientos válidos, devolver la dirección opuesta (retroceder)
-        return -direction
-    else:
-        # Elegir el movimiento que aleje más a la serpiente de su cola
-        return max(valid_moves, key=lambda move: (move - snake[-1]).length())
-
-
-def find_longest_path_to_tail(snake, head, tail):
-    tail_direction = tail - head
-    possible_moves = [
-        head + V2(1, 0),
-        head + V2(-1, 0),
-        head + V2(0, 1),
-        head + V2(0, -1),
+        move for move in possible_moves if not is_obstacle(head + move, snake)
     ]
 
-    valid_moves = [
-        move for move in possible_moves if not is_obstacle(move, snake)]
+    if valid_moves:
+        return random.choice(valid_moves)
 
-    if not valid_moves:
-        # Si no hay movimientos válidos, devolver la dirección opuesta (retroceder)
-        return -tail_direction
-    else:
-        # Elegir el movimiento que se aleje más del tail
-        return max(valid_moves, key=lambda move: (tail - move).length())
+    # Si no hay movimientos válidos, moverse en la dirección actual
+    return snake[1] - head
 
 
 def decide_direction(snake, head, food, direction):
@@ -129,30 +119,30 @@ def decide_direction(snake, head, food, direction):
 
     if path_to_food:
         return path_to_food[0] - head
-
-    # Calcular el camino hacia la cola
-    tail_direction = find_longest_path_to_tail(snake, head, snake[-1])
-
-    if tail_direction:
-        return tail_direction
     else:
-        # Si no puede encontrar una ruta hacia la comida ni hacia la cola,
-        # intenta moverse en una dirección válida que no cause colisión
-        possible_moves = [
-            V2(1, 0),
-            V2(-1, 0),
-            V2(0, 1),
-            V2(0, -1),
-        ]
+        # Calcular el camino hacia la cola
+        tail_direction = find_longest_path_to_tail(snake, head)
 
-        valid_moves = [
-            move for move in possible_moves if not is_obstacle(head + move, snake)]
-
-        if valid_moves:
-            return random.choice(valid_moves)
+        if tail_direction:
+            return tail_direction
         else:
-            # Si no hay movimientos válidos, moverse en la dirección opuesta
-            return -direction
+            # Si no puede encontrar una ruta hacia la comida ni hacia la cola,
+            # intenta moverse en una dirección válida que no cause colisión
+            possible_moves = [
+                V2(1, 0),
+                V2(-1, 0),
+                V2(0, 1),
+                V2(0, -1),
+            ]
+
+            valid_moves = [
+                move for move in possible_moves if not is_obstacle(head + move, snake)]
+
+            if valid_moves:
+                return random.choice(valid_moves)
+            else:
+                # Si no hay movimientos válidos, moverse en la dirección opuesta
+                return -direction
 
 
 while not GAME_OVER:

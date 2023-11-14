@@ -49,7 +49,7 @@ class Model:
             else:
                 self.snake.pop()
 
-    def width_search(self, start, target, obstacles):
+    def bfs(self, start, target, obstacles):
         start = (int(start.x), int(start.y))
         target = (int(target.x), int(target.y))
         obstacles = set([(int(pos.x), int(pos.y)) for pos in obstacles])
@@ -100,7 +100,7 @@ class Model:
 
     def decide_direction(self, snake, head, food, direction):
         # Calcular el camino hacia la comida
-        path_to_food = self.width_search(head, food, snake[1:])
+        path_to_food = self.bfs(head, food, snake[1:])
 
         if path_to_food:
             return path_to_food[0] - head
