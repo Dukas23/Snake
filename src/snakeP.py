@@ -2,86 +2,110 @@ import pygame as pg
 from pygame.math import Vector2 as V2
 from random import randint
 
-pg.init()
 
-WIDTH = 600
-HEIGHT = 600
+def main():
+    pg.init()
 
-SCREEN = pg.display.set_mode((WIDTH, HEIGHT))
+    WIDTH = 600
+    HEIGHT = 600
 
-BLACK = (0, 0, 0)
-GREEN = (0, 255, 0)
-RED = (255, 0, 0)
+    SCREEN = pg.display.set_mode((WIDTH, HEIGHT))
 
-GRID_SIZE = 20
-SNAKE_SPEED = 10
+    BLACK = (0, 0, 0)
+    GREEN = (0, 255, 0)
+    RED = (255, 0, 0)
 
-snake = [V2(7, 7)]
-direction = V2(1, 0)
+    GRID_SIZE = 20
+    SNAKE_SPEED = 10
 
-def draw_snake(SNAKE):
-    for segment in SNAKE:
-        x_2 = int(segment.x * GRID_SIZE)
-        y_2 = int(segment.y * GRID_SIZE)
-        pg.draw.rect(SCREEN, GREEN, (x_2, y_2, GRID_SIZE, GRID_SIZE))
+    snake = [V2(7, 7)]
+    direction = V2(1, 0)
 
-def generate_food():
-    while True:
-        x_1 = randint(0, WIDTH//GRID_SIZE - 1)
-        y_1 = randint(0, HEIGHT//GRID_SIZE - 1)
-        food_position=V2(x_1, y_1)
-        if food_position not in snake:
-            return food_position
+    COUNT = 0
+    font = pg.font.Font(None, 36)
 
-food = generate_food()
+    snake_img = pg.image.load("snke.jpg")
+    snake_img.set_colorkey((238, 238, 238) and (
+        255, 255, 255) and (239, 239, 239) and (128, 128, 128))
+    snake_img.set_alpha(128)
+    snake_img = pg.transform.scale(snake_img, (GRID_SIZE, GRID_SIZE))
 
-GAME_OVER = False
-clock = pg.time.Clock()
+    background_img = pg.image.load("background.jpg")
+    background_img = pg.transform.scale(background_img, (WIDTH, HEIGHT))
 
-while not GAME_OVER:
+    def draw_snake(SNAKE):
+        for i, segment in enumerate(SNAKE):
+            x_2 = int(segment.x * GRID_SIZE)
+            y_2 = int(segment.y * GRID_SIZE)
+            SCREEN.blit(snake_img, (x_2, y_2))
 
-    for event in pg.event.get():
-        if event.type == pg.QUIT:
+    def generate_food():
+        while True:
+            x_1 = randint(0, WIDTH//GRID_SIZE - 1)
+            y_1 = randint(0, HEIGHT//GRID_SIZE - 1)
+            food_position = V2(x_1, y_1)
+            if food_position not in snake:
+                return food_position
+
+    def draw_score(score):
+        score_text = font.render(f"Score: {score}", True, (255, 255, 255))
+        SCREEN.blit(score_text, (10, 10))
+
+    food = generate_food()
+
+    GAME_OVER = False
+    clock = pg.time.Clock()
+
+    while not GAME_OVER:
+
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                GAME_OVER = True
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_UP and direction != V2(0, 1):
+                    direction = V2(0, -1)
+                if event.key == pg.K_DOWN and direction != V2(0, -1):
+                    direction = V2(0, 1)
+                if event.key == pg.K_LEFT and direction != V2(1, 0):
+                    direction = V2(-1, 0)
+                if event.key == pg.K_RIGHT and direction != V2(-1, 0):
+                    direction = V2(1, 0)
+
+        # Mover snake
+        snake.insert(0, snake[0] + direction)
+
+        # Comprobar colisión bordes
+        if snake[0].x < 0 or snake[0].x >= WIDTH//GRID_SIZE:
             GAME_OVER = True
-        if event.type == pg.KEYDOWN:
-            if event.key == pg.K_UP and direction != V2(0, 1):
-                direction = V2(0, -1)
-            if event.key == pg.K_DOWN and direction != V2(0, -1):
-                direction = V2(0, 1)
-            if event.key == pg.K_LEFT and direction != V2(1, 0):
-                direction = V2(-1, 0)
-            if event.key == pg.K_RIGHT and direction != V2(-1, 0):
-                direction = V2(1, 0)
+        if snake[0].y < 0 or snake[0].y >= HEIGHT//GRID_SIZE:
+            GAME_OVER = True
 
-    # Mover snake
-    snake.insert(0, snake[0] + direction)
+        # Comprobar colisión consigo mismo
+        if len(snake) > 1 and snake[0] in snake[1:]:
+            GAME_OVER = True
 
-    # Comprobar colisión bordes
-    if snake[0].x < 0 or snake[0].x >= WIDTH//GRID_SIZE:
-        GAME_OVER = True
-    if snake[0].y < 0 or snake[0].y >= HEIGHT//GRID_SIZE:
-        GAME_OVER = True
+        # Comer comida
+        if snake[0] == food:
+            COUNT += 1
+            food = generate_food()
+        else:
+            snake.pop()
 
-    # Comprobar colisión consigo mismo
-    if len(snake) > 1 and snake[0] in snake[1:]:
-        GAME_OVER = True
+        SCREEN.blit(background_img, (0, 0))
 
-    # Comer comida
-    if snake[0] == food:
-        food = generate_food()
-    else:
-        snake.pop()
+        draw_snake(snake)
+        draw_score(COUNT)
 
-    SCREEN.fill(BLACK)
+        x = int(food.x * GRID_SIZE)
+        y = int(food.y * GRID_SIZE)
+        pg.draw.rect(SCREEN, RED, (x, y, GRID_SIZE, GRID_SIZE))
 
-    draw_snake(snake)
+        pg.display.update()
+        clock.tick(SNAKE_SPEED)
 
-    x = int(food.x * GRID_SIZE)
-    y = int(food.y * GRID_SIZE)
-    pg.draw.rect(SCREEN, RED, (x, y, GRID_SIZE, GRID_SIZE))
+    pg.quit()
+    # End-of-file (EOF)
 
-    pg.display.update()
-    clock.tick(SNAKE_SPEED)
 
-pg.quit()
-# End-of-file (EOF)
+if __name__ == "__main__":
+    main()
