@@ -1,6 +1,6 @@
+from random import randint
 import pygame as pg
 from pygame.math import Vector2 as V2
-from random import randint
 
 
 def main():
@@ -11,8 +11,8 @@ def main():
 
     SCREEN = pg.display.set_mode((WIDTH, HEIGHT))
 
-    BLACK = (0, 0, 0)
-    GREEN = (0, 255, 0)
+    # BLACK = (0, 0, 0)
+    # GREEN = (0, 255, 0)
     RED = (255, 0, 0)
 
     GRID_SIZE = 20
@@ -24,13 +24,13 @@ def main():
     COUNT = 0
     font = pg.font.Font(None, 36)
 
-    snake_img = pg.image.load("snke.jpg")
+    snake_img = pg.image.load("../img/snke.jpg")
     snake_img.set_colorkey((238, 238, 238) and (
         255, 255, 255) and (239, 239, 239) and (128, 128, 128))
     snake_img.set_alpha(128)
     snake_img = pg.transform.scale(snake_img, (GRID_SIZE, GRID_SIZE))
 
-    background_img = pg.image.load("background.jpg")
+    background_img = pg.image.load("../img/background.jpg")
     background_img = pg.transform.scale(background_img, (WIDTH, HEIGHT))
 
     def draw_snake(SNAKE):
