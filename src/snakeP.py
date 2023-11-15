@@ -3,6 +3,7 @@ import pygame as pg
 from pygame.math import Vector2 as V2
 
 
+
 def main():
     pg.init()
 
@@ -103,8 +104,35 @@ def main():
         pg.display.update()
         clock.tick(SNAKE_SPEED)
 
+    show_game_over_screen(font, SCREEN, WIDTH, HEIGHT, clock)
+
     pg.quit()
     # End-of-file (EOF)
+
+
+def show_game_over_screen(font, SCREEN, WIDTH, HEIGHT, clock):
+    game_over_text = font.render("¡Game Over!", True, (255, 255, 255))
+    restart_text = font.render(
+        "Presiona 'S' para reiniciar", True, (255, 255, 255))
+    exit_text = font.render("Presiona 'N' para salir", True, (255, 255, 255))
+
+    SCREEN.blit(game_over_text, (WIDTH // 2 - 80, HEIGHT // 2 - 50))
+    SCREEN.blit(restart_text, (WIDTH // 2 - 160, HEIGHT // 2))
+    SCREEN.blit(exit_text, (WIDTH // 2 - 135, HEIGHT // 2 + 50))
+
+    pg.display.update()
+
+    while True:
+        for event in pg.event.get():
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_s:
+                    main()
+                elif event.key == pg.K_n:
+                    global GAME_OVER
+                    GAME_OVER = True
+                    return
+
+        clock.tick(5)
 
 
 if __name__ == "__main__":
