@@ -11,7 +11,7 @@ def main():
     height = 600
 
     screen = pg.display.set_mode((width, height))
-    
+
     # declaration of variables
     red = (255, 0, 0)
 
@@ -54,20 +54,20 @@ def main():
                 if event.key == pg.K_RIGHT and direction != V2(-1, 0):
                     direction = V2(1, 0)
 
-        # Mover snake
+        # Move snake
         snake.insert(0, snake[0] + direction)
 
-        # Comprobar colisión bordes
+        # check collision with edges
         if snake[0].x < 0 or snake[0].x >= width//grid_size:
             GAME_OVER = True
         if snake[0].y < 0 or snake[0].y >= height//grid_size:
             GAME_OVER = True
 
-        # Comprobar colisión consigo mismo
+        # check collision with itself
         if len(snake) > 1 and snake[0] in snake[1:]:
             GAME_OVER = True
 
-        # Comer comida
+        # eat food
         if snake[0] == food:
             count += 1
             food = generate_food(snake, width, height, grid_size)
@@ -114,15 +114,15 @@ def generate_food(snake, width, height, grid_size):
             return food_position
 
 
-def show_game_over_screen(font, SCREEN, WIDTH, HEIGHT, clock):
+def show_game_over_screen(font, screen, width, height, clock):
     game_over_text = font.render("¡Game Over!", True, (255, 255, 255))
     restart_text = font.render(
         "Presiona 'S' para reiniciar", True, (255, 255, 255))
     exit_text = font.render("Presiona 'N' para salir", True, (255, 255, 255))
 
-    SCREEN.blit(game_over_text, (WIDTH // 2 - 80, HEIGHT // 2 - 50))
-    SCREEN.blit(restart_text, (WIDTH // 2 - 160, HEIGHT // 2))
-    SCREEN.blit(exit_text, (WIDTH // 2 - 135, HEIGHT // 2 + 50))
+    screen.blit(game_over_text, (width // 2 - 80, height // 2 - 50))
+    screen.blit(restart_text, (width // 2 - 160, height // 2))
+    screen.blit(exit_text, (width // 2 - 135, height // 2 + 50))
 
     pg.display.update()
 
