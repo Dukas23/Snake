@@ -24,8 +24,13 @@ class View:
         y = int(self.model.food.y * self.model.grid_size)
         pg.draw.rect(self.screen, self.red,
                      (x, y, self.model.grid_size, self.model.grid_size))
+    
+    def draw_score(self, font, score, screen):
+        score_text = font.render(f"Score: {score}", True, (255, 255, 255))
+        screen.blit(score_text, (10, 10))
 
     def update_display(self):
         self.draw_snake()
         self.draw_food()
+        self.draw_score(self.model.font, self.model.score, self.screen)
         pg.display.update()

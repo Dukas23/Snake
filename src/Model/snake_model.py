@@ -5,7 +5,7 @@ from pygame.math import Vector2 as V2
 
 
 class Model:
-    def __init__(self, width, height, grid_size, snake_speed):
+    def __init__(self, width, height, grid_size, snake_speed, score, font):
         self.width = width
         self.height = height
         self.grid_size = grid_size
@@ -13,6 +13,8 @@ class Model:
         self.snake = [V2(7, 7)]
         self.direction = V2(1, 0)
         self.food = self.generate_food()
+        self.score = score
+        self.font = font
         self.game_over = False
 
     def generate_food(self):
@@ -46,6 +48,7 @@ class Model:
             self.snake.insert(0, new_head)
             if new_head == self.food:
                 self.food = self.generate_food()
+                self.score += 1
             else:
                 self.snake.pop()
 

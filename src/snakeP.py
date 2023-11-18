@@ -24,13 +24,13 @@ def main():
     count = 0
     font = pg.font.Font(None, 36)
 
-    snake_img = pg.image.load("../img/snke.jpg")
+    snake_img = pg.image.load("img/snke.jpg")
     snake_img.set_colorkey((238, 238, 238) and (
         255, 255, 255) and (239, 239, 239) and (128, 128, 128))
     snake_img.set_alpha(128)
     snake_img = pg.transform.scale(snake_img, (grid_size, grid_size))
 
-    background_img = pg.image.load("../img/background.jpg")
+    background_img = pg.image.load("img/background.jpg")
     background_img = pg.transform.scale(background_img, (width, height))
 
     food = generate_food(snake, width, height, grid_size)
