@@ -18,8 +18,8 @@ The game is developed in Python using Pygame for the graphical interface. The go
 
 ### Clone respository
 
-git clone https://github.com/Dukas23/Snake.git
-cd Snake
+- git clone https://github.com/Dukas23/Snake.git
+- cd Snake
 
 ### Install the required dependencies
 
